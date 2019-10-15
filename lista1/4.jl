@@ -7,7 +7,7 @@ type - typ danych, dla którego ją wyznaczyć
 """
 function a(type)
     current = one(type)
-    while nextfloat(current) * (one(type)/nextfloat(current)) == one(type)
+    while nextfloat(current) * (one(type)/nextfloat(current)) == one(type) && current < 2
         current = nextfloat(current)
     end
     nextfloat(current)
