@@ -1,3 +1,5 @@
+# Autor: Bartosz Rajczyk
+
 function deriviative(fun, x, h)
     (fun(x + h) - fun(x))/h
 end
