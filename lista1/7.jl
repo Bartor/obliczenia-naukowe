@@ -13,4 +13,5 @@ function funPrim(x)
 end
 
 result = funPrim(1.0)
-foreach(h -> println(deriviative(fun, 1.0, 2.0^(-h)), " ", abs(result - deriviative(fun, 1.0, 2.0^(-h)))), 0:54)
+foreach(h -> println("\$2^{-$h}\$", " & ", 1.0 + 2.0^(-h) ," & ", deriviative(fun, 1.0, 2.0^(-h)), " & ", abs(result - deriviative(fun, 1.0, 2.0^(-h))), " \\\\\n\\hline"), 0:54)
+println(result)
