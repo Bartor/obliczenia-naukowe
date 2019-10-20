@@ -1,3 +1,7 @@
+# Autor: Bartosz Rajczyk
+
+# Każda funkcja w tym programie bierze za argument jakiś typ danych liczb zmiennoprzecinkowych
+# Tablica "types" trzyma wykorzysytwane przez nas typy danych
 types = [Float16, Float32, Float64]
 
 function funnyMachEps(type)
