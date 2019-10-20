@@ -31,6 +31,7 @@ function maxNumber(type)
     while !isinf(number * 2)
         number *= 2
     end
+    # aktualnie number = inf/2, musimy uzupełnić brakującą wartość
     gap = number / 2
     while !isinf(number + gap) && gap >= one(type)
         number += gap

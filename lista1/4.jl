@@ -12,7 +12,6 @@ function a()
 end
 
 result = a()
-println(bitstring(result))
 println("for ", result, " x*(1/x) = ", result*(one(Float64)/result))
 
 """
@@ -27,5 +26,4 @@ function b()
 end
 
 result = b()
-println(bitstring(result))
 println("for ", result, " x*(1/x) = ", result*(one(Float64)/result))
