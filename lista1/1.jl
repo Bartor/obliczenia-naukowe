@@ -13,7 +13,7 @@ foreach(type -> println("f: ", machEps(type), " eps: ", eps(type)), types)
 
 function eta(type)
     number = one(type)
-    while number / 2 != 0
+    while number / 2 != zero(type)
         number /= 2
     end
     number
@@ -26,6 +26,11 @@ function maxNumber(type)
     number = one(type)
     while !isinf(number * 2)
         number *= 2
+    end
+    gap = number / 2
+    while !isinf(number + gap) && gap >= one(type)
+        number += gap
+        gap /= 2
     end
     number
 end
