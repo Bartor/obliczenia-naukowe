@@ -1,7 +1,10 @@
+# Autor: Bartosz Rajczyk
+
 using Polynomials
 
-p = [
+coefficients = [
     1,
+    # -210.0 -2^(-23),
     -210.0,
     20615.0,
     -1256850.0,
@@ -24,8 +27,11 @@ p = [
     2432902008176640000.0
 ]
 
-wilkinson1 = Poly(p)
-wilkinson2 = poly(collect(1:20))
+fromCoefficients = Poly(reverse(coefficients))
+fromRoots = poly(collect(1.0:20.0))
 
-println(roots(wilkinson1))
-println(roots(wilkinson2))
+calculatedRoots = Polynomials.roots(fromRoots)
+
+for k in 1:20
+    println("$k & $(abs(fromCoefficients(calculatedRoots[k]))) & $(abs(fromRoots(calculatedRoots[k]))) & $(abs(calculatedRoots[k] - k))")
+end

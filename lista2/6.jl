@@ -1,3 +1,5 @@
+# Autor: Bartosz Rajczyk
+
 function recur(n, c, x0)
     if (n == 0)
         return x0

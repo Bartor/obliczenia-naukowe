@@ -1,3 +1,5 @@
+# Autor: Bartosz Rajczyk
+
 function population(n, r, p0)
     if (n == 0) 
         return p0
