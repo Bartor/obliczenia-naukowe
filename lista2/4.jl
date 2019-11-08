@@ -4,8 +4,8 @@ using Polynomials
 
 coefficients = [
     1,
-    # -210.0 -2^(-23),
-    -210.0,
+    -210.0-2^(-23),
+    # -210.0,
     20615.0,
     -1256850.0,
     53327946.0,
@@ -30,8 +30,8 @@ coefficients = [
 fromCoefficients = Poly(reverse(coefficients))
 fromRoots = poly(collect(1.0:20.0))
 
-calculatedRoots = Polynomials.roots(fromRoots)
+calculatedRoots = Polynomials.roots(fromCoefficients)
 
 for k in 1:20
-    println("$k & $(abs(fromCoefficients(calculatedRoots[k]))) & $(abs(fromRoots(calculatedRoots[k]))) & $(abs(calculatedRoots[k] - k))")
+    println("$k & $(abs(fromCoefficients(calculatedRoots[k]))) & $(abs(fromRoots(calculatedRoots[k]))) & $(abs(calculatedRoots[k] - k))\\\\ \n \\hline")
 end
