@@ -1,17 +1,22 @@
 # Autor: Bartosz Rajczyk
 
-function recur(n, c, x0)
-    if (n == 0)
-        return x0
+function values(reps, c, x0)
+    values = [x0]
+    for i in 1:reps-1
+        append!(values, values[i]^2+c)
     end
-
-    return recur(n - 1, c, x0)^2 + c
+    return values
 end
 
-println(recur(40, -2, 1))
-println(recur(40, -2, 2))
-println(recur(40, -2, 1.99999999999999))
-println(recur(40, -1, 1))
-println(recur(40, -1, -1))
-println(recur(40, -1, 0.75))
-println(recur(40, -1, 0.25))
+variations = [
+    (-2, 1),
+    (-2, 2),
+    (-2, 1.99999999999999),
+    (-1, 1),
+    (-1, -1),
+    (-1, 0.75),
+    (-1, 0.25)
+]
+
+reps = 40
+foreach(x -> println(x, ":\n\t", join(values(reps, x[1], x[2]), ",")), variations)
