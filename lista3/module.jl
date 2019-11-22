@@ -18,7 +18,7 @@ module Solvers
             w = f(c)
 
             if (abs(e) < delta || abs(w) < epsilon)
-                return (e, w, it, 0)
+                return (c, w, it, 0)
             end
 
             if (sign(w) != sign(u))

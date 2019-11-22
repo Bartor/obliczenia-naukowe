@@ -2,11 +2,11 @@ include("./module.jl")
 using .Solvers
 
 function f(x)
-    sin(x) - (1/2)x^2
+    sin(x) - (1/4)x^2
 end
 
 function fPrim(x)
-    cos(x) - x
+    cos(x) - (1/2)x
 end
 
 delta = (1/2)*10^(-5)
