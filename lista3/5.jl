@@ -2,7 +2,7 @@ include("./module.jl")
 using .Solvers
 
 function f(x)
-    exp(1)^x - 3x
+    exp(x) - 3x
 end
 
 delta = 10^(-4)
