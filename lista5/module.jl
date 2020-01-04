@@ -1,7 +1,7 @@
 # Autor: Bartosz Rajczyk
 
 module LinearSolvers
-export matrixFromInput, vectorFromInput, gaussianElimination, gaussianWithPivots, matrixLU!, matrixLUWithPivots!, solveLU, solveLUWithPivots
+export matrixFromInput, vectorFromInput, calculateRightSide, gaussianElimination, gaussianWithPivots, matrixLU!, matrixLUWithPivots!, solveLU, solveLUWithPivots
 
 using SparseArrays
 
@@ -50,7 +50,7 @@ function calculateRightSide(M::SparseMatrixCSC{Float64,Int}, size::Int, blockSiz
             solution[i] += M[j, i]
         end
 
-        if (i + blockSize > size)
+        if (i + blockSize < size)
             solution[i] += M[i + blockSize, i]
         end
     end
