@@ -5,34 +5,27 @@ export matrixFromInput, vectorFromInput, calculateRightSide, gauss!, gaussWithPi
 
 using SparseArrays
 
-function matrixFromInput(file::IOStream)
-    words = split(readline(file))
-    matrixSize = parse(Int, words[1])
-    blockSize = parse(Int, words[2])
-
+function matrixFromInput(file::IOStream) :: SparseMatrixCSC{Float64, Int}
     columns = []
     rows = []
     values = []
 
-    for (lineNumber, line) in enumerate(Iterators.drop(eachline(file), 1))
+    for line in Iterators.drop(eachline(file), 1)
         words = split(line)
-        push!(columns, parse(Int, words[1]))
-        push!(rows, parse(Int, words[2]))
+        push!(rows, parse(Int, words[1]))
+        push!(columns, parse(Int, words[2]))
         push!(values, parse(Float64, words[3]))
     end
 
-    M = sparse(columns, rows, values)
-    return (M, matrixSize, blockSize)
+    M = sparse(rows, columns, values)
+    return M
 end
 
-function vectorFromInput(file::IOStream)
-    words = split(readline(file))
-    size = parse(Int, words[1])
+function vectorFromInput(file::IOStream) :: Vector{Float64}
+    vector = []
 
-    vector = Array{Float64}(undef, size)
-
-    for (lineNumber, line) in enumerate(Iterators.drop(eachline(file), 1))
-        vector[lineNumber] = parse(Float64, line)
+    for line in Iterators.drop(eachline(file), 1)
+        push!(vector, parse(Float64, line))
     end
         
     return vector
@@ -40,8 +33,9 @@ end
 
 function calculateRightSide(M::SparseMatrixCSC{Float64,Int}, size::Int, blockSize::Int)
     solution = zeros(Float64, size)
+
     for i in 1:size
-        startC = convert(Int, max(i - (2 + blockSize - i % blockSize), 1))
+        startC = convert(Int, max(i - (2 + blockSize), 1))
         endC = convert(Int, min(i + blockSize, size))
 
         for j in startC:endC
@@ -55,19 +49,16 @@ end
 
 # In-place gauss elimination with right-side vector
 function gauss!(M! :: SparseMatrixCSC{Float64,Int}, b! :: Vector{Float64}, size :: Int, blockSize :: Int)
-    for i in 1:size-1
-        for j in i+1:min(size, i + 1 + blockSize)
-            if eps(Float64) > abs(M![i, i])
-                error("Diagol coefficient smaller than machine epsilon")
+    for k in 1:size-1
+        for i in k+1:min(size, k + blockSize + 1)
+            z = M![i, k] / M![k, k]
+            M![i, k] = 0.0
+
+            for j in k+1:min(size, k + blockSize + 1)
+                M![i, j] -= z * M![k, j]
             end
 
-            z = M![j, i] / M![j, j]
-            M![j, i] = 0.0
-
-            for k in i+1:min(size, i + blockSize + i % blockSize + 2)
-                M![j, k] = M![j, k] - z * M![i, k]
-            end
-            b![j] = b![j] - z * b![i]
+            b![i] -= z * b![k]
         end
     end
 end
@@ -109,7 +100,7 @@ function solveGauss(M :: SparseMatrixCSC{Float64,Int}, b :: Vector{Float64}, siz
 
     for i in size:-1:1
         currentSum = 0
-        for j in i+1:min(size, i + blockSize)
+        for j in i+1:min(size, i + blockSize + 2)
             currentSum += M[i, j] * result[j]
         end
 
@@ -140,16 +131,16 @@ function solveGaussWithPivots(M :: SparseMatrixCSC{Float64, Int}, b :: Vector{Fl
     return result
 end
 
-# Where L! is original matrix, U! is zero-matrix of the same size
-function gaussLU!(L! :: SparseMatrixCSC{Float64, Int}, U! :: SparseMatrixCSC{Float64, Int}, size :: Int, blockSize :: Int)
+# Where U! is original matrix, L! is zero-matrix of the same size
+function gaussLU!(U! :: SparseMatrixCSC{Float64, Int}, L! :: SparseMatrixCSC{Float64, Int}, size :: Int, blockSize :: Int)
     for k in 1:size-1
-        L![k, k] = 1
+        L![k, k] = 1.0
         for i in k+1:min(size, k + blockSize + 1)
             z = U![i, k] / U![k, k]
             L![i, k] = z
-            U![i, k] = 0
+            U![i, k] = 0.0
             for j in k+1:min(size, k + 2 * blockSize)
-                U![i, j] = U![i, j] - z *U![k, j]
+                U![i, j] -= z *U![k, j]
             end
         end
     end
@@ -187,12 +178,12 @@ function gaussWithPivotsLU!(U! :: SparseMatrixCSC{Float64, Int}, L! :: SparseMat
     return pivots
 end
 
-function solveLU(L :: SparseMatrixCSC{Float64,Int}, U :: SparseMatrixCSC{Float64,Int}, b :: Vector{Float64}, size :: Int, blockSize :: Int)
+function solveLU(U :: SparseMatrixCSC{Float64,Int}, L :: SparseMatrixCSC{Float64,Int}, b :: Vector{Float64}, size :: Int, blockSize :: Int)
     result = zeros(Float64, size)
 
     for k in 1:size-1
         for i in k+1:min(size, k + blockSize + 1)
-            b[i] = b[i] - L[i, k] * b[k]
+            b[i] -= L[i, k] * b[k]
         end
     end
 
@@ -207,7 +198,7 @@ function solveLU(L :: SparseMatrixCSC{Float64,Int}, U :: SparseMatrixCSC{Float64
     return result
 end
 
-function solveLUWithPivots(L :: SparseMatrixCSC{Float64,Int}, U :: SparseMatrixCSC{Float64,Int}, b :: Vector{Float64}, size :: Int, blockSize :: Int, pivots :: Vector{Int})
+function solveLUWithPivots(U :: SparseMatrixCSC{Float64,Int}, L :: SparseMatrixCSC{Float64,Int}, b :: Vector{Float64}, size :: Int, blockSize :: Int, pivots :: Vector{Int})
     result = zeros(Float64, size)
 
     for k in 1:size-1
