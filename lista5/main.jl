@@ -10,9 +10,9 @@ MAX_SIZE = 15000
 JUMP_SIZE = 400
 BLOCK_SIZE = 4
 
-function challange(M, L, b, size, blockSize)
-    gauss!(M, b, size, blockSize)
-    solveGauss(M, b, size, blockSize)
+function challenge(M, L, b, size, blockSize)
+    p = gaussWithPivotsLU!(M, L, size, blockSize)
+    solveLUWithPivots(M, L, b, size, blockSize, p)
 end
 
 function benchmark()
@@ -23,13 +23,21 @@ function benchmark()
             M = blockmat(size, BLOCK_SIZE, 1.0)
             b = calculateRightSide(M, size, BLOCK_SIZE)
             L = SparseArrays.spzeros(size, size)
-            (_, time, memory) = @timed challange(M, L, b, size, BLOCK_SIZE)
+            (_, time, memory) = @timed challenge(M, L, b, size, BLOCK_SIZE)
             totalTime += time
             totalMemory += memory
         end
-        println(size, "; ", totalTime / REP_NUMER, "; ", totalMemory / REP_NUMER)
+        println(size, "; ", replace(string(totalTime / REP_NUMER), "." => ","), "; ", replace(string(totalMemory / REP_NUMER), "." => ","))
     end
 end
+
+# M = blockmat(50000, BLOCK_SIZE, 1.0)
+# b = calculateRightSide(M, 50000, BLOCK_SIZE)
+# L = SparseArrays.spzeros(50000, 50000)
+# (_, time, memory) = @timed challenge(M, L, b, 50000, BLOCK_SIZE)
+
+# println(time)
+# println(memory)
 
 benchmark()
 
