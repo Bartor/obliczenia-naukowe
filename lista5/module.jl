@@ -84,7 +84,7 @@ function gaussWithPivots!(M! :: SparseMatrixCSC{Float64,Int}, b! :: Vector{Float
             z = M![pivots[i], k] / M![pivots[k], k]
             M![pivots[i], k] = 0.0
 
-            for j in k+1:min(size, k + blockSize + k % blockSize + 2)
+            for j in k+1:min(size, k + 2 * blockSize)
                 M![pivots[i], j] = M![pivots[i], j] - z * M![pivots[k], j]
             end
             b![pivots[i]] = b![pivots[i]] - z * b![pivots[k]]
